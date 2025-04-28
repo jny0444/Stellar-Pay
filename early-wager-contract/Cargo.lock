@@ -803,6 +803,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "42f5e15c9953c5e4ccceeb2e7382a716482c34515315f7b03532b8b4e8393d2d"
 
 [[package]]
+name = "openzeppelin-fungible-token"
+version = "0.1.0"
+source = "git+https://github.com/OpenZeppelin/stellar-contracts?tag=v0.1.0#f7263bf70ef70af9fdde418cb1facc861edd49c1"
+dependencies = [
+ "soroban-sdk",
+]
+
+[[package]]
 name = "p256"
 version = "0.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1288,6 +1296,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
+name = "stellar-constants"
+version = "0.1.0"
+source = "git+https://github.com/OpenZeppelin/stellar-contracts#4f18e0cd0e1d49b2f27e30e8fa5206e95ea4c178"
+dependencies = [
+ "soroban-sdk",
+]
+
+[[package]]
+name = "stellar-fungible"
+version = "0.1.0"
+source = "git+https://github.com/OpenZeppelin/stellar-contracts#4f18e0cd0e1d49b2f27e30e8fa5206e95ea4c178"
+dependencies = [
+ "soroban-sdk",
+ "stellar-constants",
+]
+
+[[package]]
 name = "stellar-strkey"
 version = "0.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1397,6 +1422,16 @@ checksum = "3526739392ec93fd8b359c8e98514cb3e8e021beb4e5f597b00a0221f8ed8a49"
 dependencies = [
  "num-conv",
  "time-core",
+]
+
+[[package]]
+name = "token"
+version = "0.0.0"
+dependencies = [
+ "openzeppelin-fungible-token",
+ "soroban-sdk",
+ "soroban-token-sdk",
+ "stellar-fungible",
 ]
 
 [[package]]
