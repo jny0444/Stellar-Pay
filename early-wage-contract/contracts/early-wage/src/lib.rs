@@ -19,4 +19,9 @@ impl EarlyWageContract {
     }
 
     pub fn request_advance(e: &Env) {}
+
+    pub fn vault_balance(e: &Env) -> i128 {
+        token::TokenClient::new(e, &e.current_contract_address())
+            .balance(&e.current_contract_address())
+    }
 }
