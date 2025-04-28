@@ -1,8 +1,10 @@
 import React from "react";
+import SendMoneyButton from "./SendMoneyButton.jsx";
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col items-center p-6">
+    
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] text-white px-4">
       
       
       <header className="w-full max-w-5xl flex justify-between items-center py-6">
@@ -17,15 +19,24 @@ const HomePage = () => {
         
         {/* Earnings Summary */}
         <div className="col-span-2 bg-white shadow-lg rounded-2xl p-6 flex flex-col justify-between">
-          <h2 className="text-xl font-semibold text-blue-700 mb-4">Earnings Summary</h2>
-          <div className="text-5xl font-bold text-blue-900 mb-2">$850.00</div>
-          <p className="text-gray-500">Available to Withdraw</p>
-          <div className="mt-6">
-            <button className="w-full bg-blue-700 text-white py-3 rounded-xl hover:bg-blue-800 transition">
-              Withdraw Earnings
-            </button>
-          </div>
-        </div>
+  <h2 className="text-xl font-semibold text-blue-700 mb-4">Earnings Summary</h2>
+  
+  <div className="text-5xl font-bold text-blue-900 mb-2">$850.00</div>
+  <p className="text-gray-500">Available to Withdraw</p>
+
+  {/* Buttons Section */}
+  <div className="mt-6 space-y-4">
+    {/* Withdraw Button */}
+    <button className="w-full bg-blue-700 text-white py-3 rounded-xl hover:bg-blue-800 transition">
+      Withdraw Earnings
+    </button>
+
+    {/* Send Money Button */}
+    <SendMoneyButton onSend={async () => {
+      console.log("Smart contract called!");
+    }} />
+  </div>
+</div>
 
         {/* Pay Cycle Progress */}
         <div className="bg-white shadow-lg rounded-2xl p-6 flex flex-col">
