@@ -1430,6 +1430,7 @@ version = "0.0.0"
 dependencies = [
  "openzeppelin-fungible-token",
  "soroban-sdk",
+ "soroban-token-sdk",
  "stellar-fungible",
 ]
 
