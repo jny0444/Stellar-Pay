@@ -104,4 +104,43 @@ impl EarlyWageContract {
             .unwrap_or(Map::new(&e));
         emp_map.get(emp_id).unwrap()
     }
+
+    pub fn release_remaining_salary(e: Env, emp_id: u128, token: Address, salary: u128) {
+        let mut emp_map: Map<u128, EmployeeDetails> = e
+            .storage()
+            .instance()
+            .get(&EMP_DETAILS)
+            .unwrap_or(Map::new(&e));
+
+        let mut emp = emp_map.get(emp_id).unwrap();
+
+        if emp.rem_salary == 0 {
+            panic!("No remaining salary to release");
+        }
+
+        let client = token::Client::new(&e, &token);
+
+        client.transfer(
+            &e.current_contract_address(),
+            &emp.wallet,
+            &(emp.rem_salary as i128),
+        );
+
+        emp.rem_salary = salary;
+        emp_map.set(emp_id, emp);
+
+        e.storage().instance().set(&EMP_DETAILS, &emp_map);
+    }
+
+    pub fn get_remaining_salary(e: Env, emp_id: u128) -> u128 {
+        let emp_map: Map<u128, EmployeeDetails> = e
+            .storage()
+            .instance()
+            .get(&EMP_DETAILS)
+            .unwrap_or(Map::new(&e));
+
+        let emp = emp_map.get(emp_id).unwrap();
+
+        emp.rem_salary
+    }
 }
