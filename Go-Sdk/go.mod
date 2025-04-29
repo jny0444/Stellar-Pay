@@ -1,6 +1,6 @@
 module github.com/tanayarun/stellarpay
 
-go 1.24.2
+go 1.24
 
 require github.com/stellar/go v0.0.0-20250424183418-116aa946fb47
 
