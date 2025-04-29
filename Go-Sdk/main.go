@@ -20,14 +20,14 @@ type TransferRequest struct {
 }
 
 func sendLumens(w http.ResponseWriter, r *http.Request) {
-	// Decode the request body
+	
 	var req TransferRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	// Validate input
+	
 	if req.Recipient == "" || req.Amount == "" {
 		http.Error(w, "Missing recipient or amount", http.StatusBadRequest)
 		return
@@ -41,7 +41,7 @@ func sendLumens(w http.ResponseWriter, r *http.Request) {
 	sourceAddress := sourceKP.Address()
 	client := horizonclient.DefaultTestNetClient
 
-	// Load account
+	
 	ar := horizonclient.AccountRequest{AccountID: sourceAddress}
 	sourceAccount, err := client.AccountDetail(ar)
 	if err != nil {
@@ -49,17 +49,17 @@ func sendLumens(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create payment operation
+	
 	paymentOp := txnbuild.Payment{
 		Destination: req.Recipient,
 		Amount:      req.Amount,
 		Asset:       txnbuild.NativeAsset{},
 	}
 
-	// Create timeout
+	
 	timeout := txnbuild.NewTimeout(300)
 
-	// Build transaction
+	
 	txParams := txnbuild.TransactionParams{
 		SourceAccount:        &sourceAccount,
 		IncrementSequenceNum: true,
@@ -73,21 +73,21 @@ func sendLumens(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Sign transaction
+	
 	signedTx, err := tx.Sign(network.TestNetworkPassphrase, sourceKP)
 	if err != nil {
 		http.Error(w, "Signing failed", http.StatusInternalServerError)
 		return
 	}
 
-	// Submit transaction
+	
 	resp, err := client.SubmitTransaction(signedTx)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Transaction failed: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-	// Return the response with the transaction hash
+	
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "Transaction successful",
