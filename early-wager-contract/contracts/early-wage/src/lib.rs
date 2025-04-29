@@ -17,6 +17,14 @@ pub struct EmployeeDetails {
     pub rem_salary: u128,
 }
 
+fn distribute_for_demo(e: &Env, sender: Address, add1: Address, add2: Address, token: Address) {
+    sender.require_auth();
+    let token = token::TokenClient::new(e, &token);
+
+    token.transfer_from(&sender, &sender, &add1, &1000);
+    token.transfer_from(&sender, &sender, &add2, &1000);
+}
+
 #[contractimpl]
 impl EarlyWageContract {
     pub fn register_employee(e: Env, wallet: Address, salary: u128) {
