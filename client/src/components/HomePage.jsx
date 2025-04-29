@@ -2,31 +2,16 @@ import React, { useState, useEffect } from "react";
 import { isConnected, getPublicKey } from '@stellar/freighter-api';
 import PayCycleProgress from "./PayCycleProgress";
 import WithdrawForm from './WithdrawForm';
+import { Contract } from "@stellar/stellar-sdk";
+
+const YOUR_CONTRACT_ID = 'YOUR_CONTRACT_ID';
+const TOKEN_ADDRESS = 'YOUR_TOKEN_ADDRESS';
 
 const HomePage = () => {
   const [walletAddress, setWalletAddress] = useState(null);
   const [lastWithdrawalDate, setLastWithdrawalDate] = useState(null);
   const [transactions, setTransactions] = useState([]);
-  const [payCycleProgress, setPayCycleProgress] = useState(0);
-  const [availableBalance, setAvailableBalance] = useState(850); 
-
-  const handleWithdraw = (amount) => {
-    if (amount > availableBalance) {
-      alert("You don't have enough balance to withdraw this amount.");
-      return;
-    }
-  
-    const newTransaction = {
-      type: 'Withdrawal',
-      amount,
-      date: new Date().toLocaleDateString(), // format: MM/DD/YYYY
-    };
-  
-    setTransactions([newTransaction, ...transactions]);
-    setAvailableBalance(prevBalance => prevBalance - amount); // Deduct amount
-    setLastWithdrawalDate(new Date());
-  };
-  
+  const [availableBalance, setAvailableBalance] = useState(1000);
 
   const connectWallet = async () => {
     if (window.freighterApi) {
@@ -44,12 +29,51 @@ const HomePage = () => {
     }
   };
 
+  const requestAdvance = async (empId, amount, tokenAddress) => {
+    try {
+      const contract = new Contract(YOUR_CONTRACT_ID);
+      const response = await contract.methods.request_advance(empId, amount, tokenAddress);
+      console.log('Request Advance Response:', response);
+    } catch (error) {
+      console.error('Request Advance Error:', error);
+      throw error;
+    }
+  };
+
+  const handleWithdraw = async () => {
+    if (!walletAddress) {
+      alert('Please connect wallet');
+      return;
+    }
+
+    const empId = 1;
+    const amount = Math.floor(availableBalance * 100); // example: withdraw all
+
+    try {
+      await requestAdvance(empId, amount, TOKEN_ADDRESS);
+      const withdrawn = amount / 100;
+      setAvailableBalance(prev => prev - withdrawn);
+      setLastWithdrawalDate(new Date());
+
+      const newTransaction = {
+        type: 'Withdrawal',
+        amount: withdrawn,
+        date: new Date().toLocaleDateString(),
+      };
+
+      setTransactions(prev => [newTransaction, ...prev]);
+
+      alert('Withdrawal successful');
+    } catch (error) {
+      alert('Withdrawal failed');
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] text-white px-4">
-      {/* Header */}
       <header className="w-full max-w-5xl flex justify-between items-center py-6">
-        <h1 className="text-4xl font-extrabold text-white-800 text-center w-full">
-         StellarPay
+        <h1 className="text-4xl font-extrabold text-blue-800 text-center w-full">
+          WageAccess
         </h1>
 
         {walletAddress ? (
@@ -66,28 +90,22 @@ const HomePage = () => {
         )}
       </header>
 
-      {/* Main Dashboard */}
       <main className="w-full max-w-5xl mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        {/* Earnings Summary */}
         <div className="col-span-3 bg-white shadow-lg rounded-2xl p-6 flex flex-col justify-between">
           <h2 className="text-xl font-semibold text-blue-700 mb-4">Earnings Summary</h2>
 
           <div className="text-5xl font-bold text-blue-900 mb-2">
-  ${availableBalance.toFixed(2)}
-</div>
+            ${availableBalance.toFixed(2)}
+          </div>
           <p className="text-gray-500">Available to Withdraw</p>
 
-          {/* Withdraw Form */}
           <div className="mt-6 space-y-4">
             <WithdrawForm onWithdraw={handleWithdraw} />
           </div>
 
-          {/* Pay Cycle Progress */}
           <PayCycleProgress lastWithdrawalDate={lastWithdrawalDate} />
         </div>
 
-        {/* Transaction History */}
         <div className="col-span-3 bg-white shadow-lg rounded-2xl p-6 mt-6">
           <h2 className="text-xl font-semibold text-blue-700 mb-4">Recent Transactions</h2>
           {transactions.length === 0 ? (
